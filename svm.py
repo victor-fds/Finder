@@ -1,17 +1,18 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn import svm, metrics
 
-class Kneighbors(object):
 
-    knr = ""
+class SVM(object):
+
+    svmC = ""
 
     def __init__(self):
         pass
 
     def do_test(self, test_csv):
-        global knr
+        global svmC
         example = pd.read_csv('trf/saida_teste.csv')
         example.drop(['repeat_id'], 1, inplace=True)
         example.drop(['start'], 1, inplace=True)
@@ -26,18 +27,18 @@ class Kneighbors(object):
         teste = example.drop(['var'], 1)
 
         print("Resultados")
-        prediction = knr.predict(teste)
-        print("Score provável: " + str(knr.score(teste, example['var'])))
+        prediction = svmC.predict(teste)
+        print("Score provável: " + str(svmC.score(teste, example['var'])))
         print(prediction)
         print(example['var'])
         print("-----")
 
     def do_train(self, train_csv):
-        global knr
+        global svmC
 
         score = 0
 
-        while score < 0.70 :
+        while score < 0.50 :
             data = pd.read_csv(train_csv)
 
             # utiliza apenas consensus_size, copy_nro e purity
@@ -58,13 +59,11 @@ class Kneighbors(object):
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8)
 
-            knr = KNeighborsRegressor(n_neighbors=1, algorithm='auto')
-            knr.fit(X_train, y_train)
+            svmC = svm.SVC()
+            svmC.fit(X_train, y_train)
 
-            score = knr.score(X_test, y_test)
+            score = svmC.score(X_test, y_test)
 
-            #if score >= 0.70:
             print("Score atingiu: " + str(score))
-
             print(y_test)
-            print(knr.predict(X_test))
+            print(svmC.predict(X_test))
